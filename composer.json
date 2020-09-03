@@ -1,0 +1,13 @@
+{
+    "name": "adriendupuis/ezplatform-standard",
+    "description": "eZ Platform Standard Features",
+    "autoload": {
+        "psr-4": {
+            "AdrienDupuis\\EzPlatformStandardBundle\\": "src/bundle/"
+        }
+    },
+    "require": {
+        "ext-json": "*",
+        "ezsystems/ezplatform-kernel": "^1.0.0"
+    }
+}
