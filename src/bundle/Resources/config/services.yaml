@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    AdrienDupuis\EzPlatformStandardBundle\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Tests}'
+        autowire: true
+        autoconfigure: true
+
+    AdrienDupuis\EzPlatformStandardBundle\FieldType\TypedMatrix\Type:
+        public: true
+        tags:
+            - { name: ezplatform.field_type, alias: adtypedmatrix }
+
+    #TODO: indexation
+    ezpublish.fieldtype.indexable.adtypedmatrix:
+        class: '%ezpublish.fieldType.indexable.unindexed.class%'
+        tags:
+            - { name: ezplatform.field_type.indexable, alias: adtypedmatrix }
+
+    AdrienDupuis\EzPlatformStandardBundle\FieldType\TypedMatrix\LegacyConverter:
+        tags:
+            - {name: ezpublish.storageEngine.legacy.converter, alias: adtypedmatrix}
+
+    AdrienDupuis\EzPlatformStandardBundle\FieldType\TypedMatrix\Storage\TypedMatrixStorage:
+        tags:
+              - { name: ezplatform.field_type.external_storage_handler, alias: adtypedmatrix }
