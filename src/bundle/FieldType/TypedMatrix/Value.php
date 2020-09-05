@@ -6,8 +6,19 @@ use eZ\Publish\Core\FieldType\Value as ValueInterface;
 
 class Value extends ValueInterface
 {
-    public function __toString()
-    {
+    /** @var TypedMatrixRow */
+    private $rows;
 
+    /**
+     * @return TypedMatrixRow[]
+     */
+    public function getRows(): array
+    {
+        return $this->rows;
+    }
+
+    public function __toString(): string
+    {
+        return '';
     }
 }
