@@ -7,7 +7,12 @@ use eZ\Publish\Core\FieldType\Value as ValueInterface;
 class Value extends ValueInterface
 {
     /** @var TypedMatrixRow */
-    private $rows;
+    private $rows = [];
+
+    public function __construct($rows = [])
+    {
+        $this->setRows($rows);
+    }
 
     /**
      * @return TypedMatrixRow[]
@@ -15,6 +20,18 @@ class Value extends ValueInterface
     public function getRows(): array
     {
         return $this->rows;
+    }
+
+    /**
+     * @param TypedMatrixRow[] $rows
+     *
+     * @return $this
+     */
+    public function setRows(array $rows): self
+    {
+        $this->rows = $rows;
+
+        return $this;
     }
 
     public function __toString(): string

@@ -43,7 +43,7 @@ class Type extends FieldType implements FieldValueFormMapperInterface, FieldDefi
 
     public function getEmptyValue()
     {
-        // TODO: Implement getEmptyValue() method.
+        return new Value();
     }
 
     public function fromHash($hash)
