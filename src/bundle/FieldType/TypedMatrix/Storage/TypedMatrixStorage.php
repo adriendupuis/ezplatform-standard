@@ -23,13 +23,14 @@ class TypedMatrixStorage implements FieldStorage
         // TODO: Implement deleteFieldData() method.
     }
 
-    public function hasFieldData()
+    public function hasFieldData(): bool
     {
-        // TODO: Implement hasFieldData() method.
+        return true;
     }
 
     public function getIndexData(VersionInfo $versionInfo, Field $field, array $context)
     {
-        // TODO: Implement getIndexData() method.
+        //TODO: indexation
+        return null;
     }
 }

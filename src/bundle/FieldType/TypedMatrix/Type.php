@@ -28,6 +28,8 @@ class Type extends FieldType implements FieldValueFormMapperInterface, FieldDefi
 
     protected function createValueFromInput($inputValue)
     {
+        dump($inputValue);
+        return new Value();
         // TODO: Implement createValueFromInput() method.
     }
 

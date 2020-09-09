@@ -26,4 +26,4 @@ services:
 
     AdrienDupuis\EzPlatformStandardBundle\FieldType\TypedMatrix\Storage\TypedMatrixStorage:
         tags:
-              - { name: ezplatform.field_type.external_storage_handler, alias: adtypedmatrix }
+            - { name: ezplatform.field_type.external_storage_handler, alias: adtypedmatrix }
