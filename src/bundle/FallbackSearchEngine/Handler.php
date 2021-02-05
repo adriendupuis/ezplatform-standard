@@ -90,8 +90,8 @@ class Handler implements VersatileHandler
                 }
 
                 return $this->getSearchEngine($alias);
-            } elseif (!$index && !is_null($this->logger)) {
-                $this->logger->warning("Main search service '{$alias}' do not ping.");
+            } elseif (!is_null($this->logger)) {
+                $this->logger->warning(($index ? 'Alternative' : 'Main') . " search service '{$alias}' do not ping.");
             }
         }
         if (!is_null($this->logger)) {
