@@ -1,0 +1,42 @@
+parameters:
+    ezplatform.search_engine.fallback.list: ['solr', 'legacy']
+
+services:
+    ezplatform.search_engine.fallback.handler:
+        class: AdrienDupuis\EzPlatformStandardBundle\FallbackSearchEngine\Handler
+        arguments:
+            $searchEngineAliases: "%ezplatform.search_engine.fallback.list%"
+            $searchEngineFactory: "@ezpublish.api.search_engine.factory"
+            $logger: "@logger"
+        tags:
+            - { name: ezplatform.search_engine, alias: fallback }
+        lazy: true
+
+    ezplatform.search_engine.fallback.indexer:
+        class: AdrienDupuis\EzPlatformStandardBundle\FallbackSearchEngine\Indexer
+        arguments:
+            $logger: "@logger"
+            $persistenceHandler: "@ezpublish.api.storage_engine"
+            $connection: "@ezpublish.persistence.connection"
+            $searchHandler: "@ezplatform.search_engine.fallback.handler"
+            $searchEngineAliases: "%ezplatform.search_engine.fallback.list%"
+            $searchEngineIndexerFactory: "@ezpublish.api.search_engine.indexer.factory"
+        tags:
+            - { name: ezplatform.search_engine.indexer, alias: fallback }
+        lazy: true
+
+    AdrienDupuis\EzPlatformStandardBundle\FallbackSearchEngine\Ping\SolrPing:
+        arguments:
+            - "%solr_dsn%/%solr_core%"
+            - "@http_client"
+        tags:
+            - { name: ezplatform.search_engine.ping, alias: solr }
+
+#TODO:
+#    AdrienDupuis\EzPlatformStandardBundle\FallbackSearchEngine\ElasticsearchPingClient:
+#        tags:
+#            - { name: ezplatform.search_engine.ping, alias: elasticsearch }
+#
+    AdrienDupuis\EzPlatformStandardBundle\FallbackSearchEngine\Ping\LegacyPing:
+        tags:
+            - { name: ezplatform.search_engine.ping, alias: legacy }
