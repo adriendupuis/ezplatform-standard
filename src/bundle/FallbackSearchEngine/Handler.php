@@ -8,6 +8,7 @@ use eZ\Bundle\EzPublishCoreBundle\ApiLoader\SearchEngineFactory;
 use eZ\Publish\API\Repository\Values\Content\LocationQuery;
 use eZ\Publish\API\Repository\Values\Content\Query;
 use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
+use eZ\Publish\API\Repository\Values\Content\Search\SearchResult;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\SPI\Persistence\Content;
 use eZ\Publish\SPI\Persistence\Content\Location;
@@ -43,10 +44,9 @@ class Handler implements VersatileHandler
         $this->logger = $logger;
 
         if (0 === count($searchEngineAliases)) {
-            throw new InvalidArgumentException('$searchEngineAliases', 'The fallback search engine chain\'s aliase list can\'t be empty.');
-        }
-        if (1 === count($searchEngineAliases)) {
-            throw new InvalidArgumentException('$searchEngineAliases', 'The fallback search engine chain\'s aliase list must contain more than one alias to be useful.');
+            throw new InvalidArgumentException('$searchEngineAliases', 'The fallback search engine chain\'s alias list can\'t be empty.');
+        } elseif (1 === count($searchEngineAliases)) {
+            $this->logger->notice('The fallback search engine chain\'s alias list must contain more than one alias to be useful.');
         }
         if (in_array(self::ALIAS, $searchEngineAliases)) {
             throw new InvalidArgumentException('$searchEngineAliases', 'The fallback search engine chain can\'t contain the fallback handler\'s alias itself.');
@@ -72,7 +72,7 @@ class Handler implements VersatileHandler
         $this->innerSearchEngine = $this->getAvailableSearchEngine();
     }
 
-    public function getInnerSearchEngine(): VersatileHandler
+    public function getInnerSearchEngine(): ?VersatileHandler
     {
         if (is_null($this->innerSearchEngine)) {
             $this->setInnerSearchEngine();
@@ -81,7 +81,7 @@ class Handler implements VersatileHandler
         return $this->innerSearchEngine;
     }
 
-    public function getAvailableSearchEngine(): VersatileHandler
+    public function getAvailableSearchEngine(): ?VersatileHandler
     {
         foreach ($this->searchEngineAliases as $index => $alias) {
             if ($this->getSearchEnginePingService($alias)->ping()) {
@@ -97,6 +97,8 @@ class Handler implements VersatileHandler
         if (!is_null($this->logger)) {
             $this->logger->error('No search service available.');
         }
+
+        return null;
     }
 
     private function getSearchEngine(string $alias): VersatileHandler
@@ -108,6 +110,15 @@ class Handler implements VersatileHandler
         throw new InvalidSearchEngine("Invalid search engine '{$alias}'. Could not find any service tagged with 'ezplatform.search_engine' with alias '{$alias}'.");
     }
 
+    private function getEmptySearchResult(): SearchResult
+    {
+        return new SearchResult([
+            'time' => 0,
+            'totalCount' => 0,
+            'searchHits' => [],
+        ]);
+    }
+
     /* Search */
 
     public function supports(int $capabilityFlag): bool
@@ -115,8 +126,15 @@ class Handler implements VersatileHandler
         return $this->getInnerSearchEngine()->supports($capabilityFlag);
     }
 
-    public function findContent(Query $query, array $languageFilter = [])
+    /**
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     */
+    public function findContent(Query $query, array $languageFilter = []): SearchResult
     {
+        if (empty($this->getInnerSearchEngine())) {
+            return $this->getEmptySearchResult();
+        }
+
         return $this->getInnerSearchEngine()->findContent($query, $languageFilter);
     }
 
@@ -125,8 +143,12 @@ class Handler implements VersatileHandler
         return $this->getInnerSearchEngine()->findSingle($query, $languageFilter);
     }
 
-    public function findLocations(LocationQuery $query, array $languageFilter = [])
+    public function findLocations(LocationQuery $query, array $languageFilter = []): SearchResult
     {
+        if (empty($this->getInnerSearchEngine())) {
+            return $this->getEmptySearchResult();
+        }
+
         return $this->getInnerSearchEngine()->findLocations($query, $languageFilter);
     }
 
