@@ -32,7 +32,7 @@ class Indexer extends IncrementalIndexer
         $this->searchEngineIndexerFactory = $searchEngineIndexerFactory;
     }
 
-    public function getName()
+    public function getName(): string
     {
         $name = 'Fallback Pseudo Search Engine wrapping ';
         $indexers = $this->searchEngineIndexerFactory->getSearchEngineIndexers();
@@ -42,7 +42,7 @@ class Indexer extends IncrementalIndexer
          */
         foreach ($this->searchEngineAliases as $index => $alias) {
             if ($index) {
-                if (count($indexers) < $index + 1) {
+                if (count($this->searchEngineAliases) > $index + 1) {
                     $name .= ', ';
                 } else {
                     $name .= ' & ';
