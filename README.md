@@ -13,10 +13,10 @@ Install
 Features
 --------
 
-## Fallback Search Engine
+### Fallback Search Engine
 
 The fallback search engine is a wrapper receiving a list of search engines.
-* Before searching, it loop on this list and execute the search on the first healthy search engine.
+* Before searching, it loops on this list and execute the search on the first healthy search engine.
 * For indexing, two configurable cases:
   - Index on every healthy engine; Skip unavailable ones.
   - Skip whole index if one engine is unhealthy.
