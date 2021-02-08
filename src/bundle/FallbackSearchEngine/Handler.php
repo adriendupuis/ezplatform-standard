@@ -81,26 +81,9 @@ class Handler implements VersatileHandler
         return $this->innerSearchEngine;
     }
 
-    public function getAvailableSearchEngine(): ?VersatileHandler
-    {
-        foreach ($this->searchEngineAliases as $index => $alias) {
-            if ($this->getSearchEnginePingService($alias)->ping()) {
-                if ($index && !is_null($this->logger)) {
-                    $this->logger->notice("Use '{$alias}' search service as substitute.");
-                }
-
-                return $this->getSearchEngine($alias);
-            } elseif (!is_null($this->logger)) {
-                $this->logger->warning(($index ? 'Alternative' : 'Main') . " search service '{$alias}' do not ping.");
-            }
-        }
-        if (!is_null($this->logger)) {
-            $this->logger->error('No search service available.');
-        }
-
-        return null;
-    }
-
+    /**
+     * Get search engine by alias/identifier.
+     */
     private function getSearchEngine(string $alias): VersatileHandler
     {
         $searchEngines = $this->searchEngineFactory->getSearchEngines();
@@ -110,6 +93,37 @@ class Handler implements VersatileHandler
         throw new InvalidSearchEngine("Invalid search engine '{$alias}'. Could not find any service tagged with 'ezplatform.search_engine' with alias '{$alias}'.");
     }
 
+    /**
+     * Check if a search engine is responding.
+     */
+    public function isAvailable(string $alias): bool
+    {
+        return $this->getSearchEnginePingService($alias)->ping();
+    }
+
+    /**
+     * Get first responding search engine.
+     */
+    public function getAvailableSearchEngine(): ?VersatileHandler
+    {
+        foreach ($this->searchEngineAliases as $index => $alias) {
+            if ($this->isAvailable($alias)) {
+                if ($index && !is_null($this->logger)) {
+                    $this->logger->notice("Use '{$alias}' search service as substitute.");
+                }
+
+                return $this->getSearchEngine($alias);
+            } elseif (!is_null($this->logger)) {
+                $this->logger->warning(($index ? 'Alternative' : 'Main')." search service '{$alias}' is not available.");
+            }
+        }
+        if (!is_null($this->logger)) {
+            $this->logger->error('No search service available.');
+        }
+
+        return null;
+    }
+
     private function getEmptySearchResult(): SearchResult
     {
         return new SearchResult([
@@ -117,6 +131,20 @@ class Handler implements VersatileHandler
             'totalCount' => 0,
             'searchHits' => [],
         ]);
+    }
+
+    /**
+     * Check that all search engines are responding.
+     */
+    public function allSearchEngineAreAvailable(): bool
+    {
+        foreach ($this->searchEngineAliases as $alias) {
+            if (!$this->isAvailable($alias)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /* Search */

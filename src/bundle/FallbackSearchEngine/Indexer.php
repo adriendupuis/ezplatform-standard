@@ -18,18 +18,23 @@ class Indexer extends IncrementalIndexer
     /** @var SearchEngineIndexerFactory */
     private $searchEngineIndexerFactory;
 
+    /** @var bool */
+    private $allSearchEngineMustBeAvailable;
+
     public function __construct(
         LoggerInterface $logger,
         PersistenceHandler $persistenceHandler,
         Connection $connection,
         FallbackSearchHandler $searchHandler,
         array $searchEngineAliases,
-        SearchEngineIndexerFactory $searchEngineIndexerFactory
+        SearchEngineIndexerFactory $searchEngineIndexerFactory,
+        bool $allSearchEngineMustBeAvailable = false
     ) {
         parent::__construct($logger, $persistenceHandler, $connection, $searchHandler);
 
         $this->searchEngineAliases = $searchEngineAliases;
         $this->searchEngineIndexerFactory = $searchEngineIndexerFactory;
+        $this->allSearchEngineMustBeAvailable = $allSearchEngineMustBeAvailable;
     }
 
     public function getName(): string
@@ -65,15 +70,27 @@ class Indexer extends IncrementalIndexer
 
     public function updateSearchIndex(array $contentIds, $commit)
     {
-        foreach ($this->searchEngineAliases as $alias) {
-            $this->getSearchEngineIndexer($alias)->updateSearchIndex($contentIds, $commit);
-        }
+        $this->callOnAllIndexers('updateSearchIndex', [$contentIds, $commit]);
     }
 
     public function purge()
     {
-        foreach ($this->searchEngineAliases as $alias) {
-            $this->getSearchEngineIndexer($alias)->purge();
+        $this->callOnAllIndexers('purge');
+    }
+
+    private function callOnAllIndexers(string $func, array $args = [])
+    {
+        if (!$this->allSearchEngineMustBeAvailable || $this->searchHandler->allSearchEngineAreAvailable()) {
+            foreach ($this->searchEngineAliases as $alias) {
+                if ($this->searchHandler->isAvailable($alias)) {
+                    $this->logger->info("Update '$alias'");
+                    call_user_func_array([$this->getSearchEngineIndexer($alias), $func], $args);
+                } else {
+                    $this->logger->warning("Search engine '$alias' is not available.");
+                }
+            }
+        } else {
+            $this->logger->error("Some search engine are not available: Cancel all '$func' calls.");
         }
     }
 }
