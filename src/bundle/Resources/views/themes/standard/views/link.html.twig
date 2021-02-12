@@ -1,0 +1,38 @@
+{% apply spaceless %}
+
+{% if parameters.href_url is defined and parameters.href_url is not empty %}
+{% set href = parameters.href_url %}
+{% elseif parameters.href_field is defined and parameters.href_field is not empty %}
+    {% set href -%}
+        {{- ez_render_field(content, field, { 'template': _self }) -}}
+    {%- endset %}
+{% else %}
+    {% set href = path('ez_urlalias', { 'locationId': location.id }) %}
+{% endif %}
+
+{% if parameters.inner_html is defined and parameters.inner_html is not empty %}
+    {% set inner_html = parameters.inner_html|raw %}
+{% elseif parameters.inner_field is defined and parameters.inner_field is not empty %}
+    {% set inner_html -%}
+        {{- ez_render_field(content, parameters.inner_field) -}}
+    {%- endset %}
+{% else %}
+    {% set inner_html = ez_content_name(content) %}
+{% endif %}
+
+{% set attributes = '' %}
+{% if parameters.target is defined and parameters.target is not empty %}
+    {% set attributes = attributes ~ ' target="' ~ parameters.target ~ '"' %}
+{% endif %}
+{% if parameters.class is defined and parameters.class is not empty %}
+    {% set attributes = attributes ~ ' class="' ~ parameters.class ~ '"' %}
+{% endif %}
+
+<a href="{{ href }}"{{ attributes }}>{{ inner_html }}</a>
+
+{% block ezstring_field %}{{ field.value.text }}{% endblock %}
+{% block ezobjectrelation_field %}{{ path('ez_urlalias', { 'contentId': field.value.destinationContentId }) }}{% endblock %}
+{% block ezurl_field %}{{ field.value.link }}{% endblock %}
+{% block ezselection_field %}{{ fieldSettings.options[field.value.selection.0] }}{% endblock %}
+
+{% endapply %}
