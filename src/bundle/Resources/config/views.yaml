@@ -10,6 +10,5 @@ system:
             full:
                 plain_text:
                     controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\PlainTextController::plainTextView'
-                    template: '@ezdesign/full/plain_text.html.twig'
                     match:
                         Identifier\ContentType: ['plain_text']

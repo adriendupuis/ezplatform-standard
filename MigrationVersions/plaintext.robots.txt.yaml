@@ -1,0 +1,14 @@
+# Vhost must be modified to allow robots.txt to be served by DXP on non-admin domains.
+# On multi-sites, have robots.txt under each root node
+-   mode: create
+    type: content
+    content_type: plain_text
+    parent_location: 2
+    attributes:
+        name: robots.txt
+        plain_text: |
+            User-agent: *
+            Allow: /
+
+            # Sitemap: TODO
+        media_type_select: 'Plain Text: text/plain'

@@ -14,13 +14,11 @@ class PlainTextController extends AbstractController
     const MEDIA_TYPE_SELECT_FIELD_IDENTIFIER = 'media_type_select';
     const MEDIA_TYPE_STRING_FIELD_IDENTIFIER = 'media_type_string';
     const PLAIN_TEXT_FIELD_IDENTIFIER = 'plain_text';
-    const USE_LAYOUT_FIELD_IDENTIFIER = 'use_layout';
 
     /**
-     * @param ContentView $view
      * @return ContentView|Response
      */
-    public function plainTextView(ContentView $view)
+    public function plainTextView(ContentView $view): Response
     {
         $content = $view->getContent();
 
@@ -44,18 +42,10 @@ class PlainTextController extends AbstractController
             $mediaType = self::DEFAULT_MEDIA_TYPE;
         }
 
+        $plainText = $content->getFieldValue(self::PLAIN_TEXT_FIELD_IDENTIFIER)->text ?? '';
+
         $response = $view->getResponse() ?? new Response();
-
         $response->headers->add(['Content-Type' => "$mediaType; charset=UTF-8"]);
-
-        if ($content->getFieldValue(self::USE_LAYOUT_FIELD_IDENTIFIER)->bool) {
-            $view->setResponse($response);
-
-            return $view;
-        }
-
-        $plainText = $content->getFieldValue(self::PLAIN_TEXT_FIELD_IDENTIFIER)->text;
-
         $response->setContent($plainText);
 
         return $response;

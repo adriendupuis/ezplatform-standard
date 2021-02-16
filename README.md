@@ -22,7 +22,17 @@ Features
 
 ### Views
 
-* `link`
+#### `link`
+
+Parameters:
+- `href_url` [string] (optional): Raw URI to use as href attribute.
+- `href_field` [string] (optional): Identifier of the field to use to generate the URL. If the field is a ezobject
+- `inner_html` [string] (optional): Raw HTML to use as inner HTML
+- `inner_field` [string] (optional): Identifier of the field to use to generate inner HTML
+
+
+Example:
+
 ```twig
     {{ render(controller(
         'ez_content:viewAction',
@@ -40,6 +50,7 @@ Features
 
 * `plain_text`: a content type to deliver plain text media types
   - Install: `bin/console kaliop:migration:migrate --path vendor/adriendupuis/ezplatform-standard/MigrationVersions/plaintext.yaml;`
+  - Usage example: robots.txt — see vendor/adriendupuis/ezplatform-standard/MigrationVersions/plaintext.robots.txt.yaml
 
 TODO
 ----
