@@ -1,0 +1,4 @@
+{% block ezstring_field %}{{ field.value.text }}{% endblock %}
+{% block ezobjectrelation_field %}{{ path('ez_urlalias', { 'contentId': field.value.destinationContentId }) }}{% endblock %}
+{% block ezurl_field %}{{ field.value.link }}{% endblock %}
+{% block ezselection_field %}{{ fieldSettings.options[field.value.selection.0] }}{% endblock %}
