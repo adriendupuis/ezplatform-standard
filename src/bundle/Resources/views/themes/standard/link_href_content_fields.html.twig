@@ -1,4 +1,5 @@
 {% block ezstring_field %}{{ field.value.text }}{% endblock %}
-{% block ezobjectrelation_field %}{{ path('ez_urlalias', { 'contentId': field.value.destinationContentId }) }}{% endblock %}
+{% block ezobjectrelation_field %}{% if not ez_field_is_empty(content, field) %}{{ path('ez_urlalias', { 'contentId': field.value.destinationContentId }) }}{% endif %}{% endblock %}
+{% block ezobjectrelationlist_field %}{% if not ez_field_is_empty(content, field) %}{{ path('ez_urlalias', { 'contentId': field.value.destinationContentIds[0] }) }}{% endif %}{% endblock %}
 {% block ezurl_field %}{{ field.value.link }}{% endblock %}
 {% block ezselection_field %}{{ fieldSettings.options[field.value.selection.0] }}{% endblock %}

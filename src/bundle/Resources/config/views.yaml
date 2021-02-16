@@ -9,6 +9,11 @@ system:
         content_view:
             full:
                 plain_text:
-                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\PlainTextController::plainTextView'
+                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\PlainTextController::viewAction'
                     match:
                         Identifier\ContentType: ['plain_text']
+                web_application:
+                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\WebApplicationController::viewAction'
+                    template: '@ezdesign/full/web_application.html.twig'
+                    match:
+                        Identifier\ContentType: ['web_application']

@@ -18,7 +18,7 @@ class PlainTextController extends AbstractController
     /**
      * @return ContentView|Response
      */
-    public function plainTextView(ContentView $view): Response
+    public function viewAction(ContentView $view): Response
     {
         $content = $view->getContent();
 

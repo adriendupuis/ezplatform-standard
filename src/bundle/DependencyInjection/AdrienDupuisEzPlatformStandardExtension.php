@@ -23,7 +23,7 @@ class AdrienDupuisEzPlatformStandardExtension extends Extension implements Prepe
 
     public function prepend(ContainerBuilder $container): void
     {
-        $configFile = __DIR__ . '/../Resources/config/views.yaml';
+        $configFile = __DIR__.'/../Resources/config/views.yaml';
         $config = Yaml::parse(file_get_contents($configFile));
         $container->prependExtensionConfig('ezpublish', $config);
         $container->addResource(new FileResource($configFile));

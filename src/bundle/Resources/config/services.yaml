@@ -1,6 +1,7 @@
 services:
     AdrienDupuis\EzPlatformStandardBundle\Controller\:
         resource: '../../Controller/'
+        autowire: true
         tags: ['controller.service_arguments']
         calls:
             - [setContainer, ['@service_container']]
