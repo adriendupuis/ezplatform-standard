@@ -20,6 +20,27 @@ Features
   - `ez_first_not_empty_field_value`
   - `ez_first_not_empty_field_identifier`
 
+### Views
+
+* `link`
+```twig
+    {{ render(controller(
+        'ez_content:viewAction',
+        {
+            locationId: target_location_id,
+            viewType: 'link',
+            params: {
+                'inner_field': 'intro',
+            },
+        }
+    )) }}
+```
+
+### Content Types
+
+* `plain_text`: a content type to deliver plain text media types
+  - Install: `bin/console kaliop:migration:migrate --path vendor/adriendupuis/ezplatform-standard/MigrationVersions/plaintext.yaml;`
+
 TODO
 ----
 

@@ -1,0 +1,7 @@
+services:
+    AdrienDupuis\EzPlatformStandardBundle\Controller\:
+        resource: '../../Controller/'
+        tags: ['controller.service_arguments']
+        calls:
+            - [setContainer, ['@service_container']]
+            #- [performAccessCheck, []]
