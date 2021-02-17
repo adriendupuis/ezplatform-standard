@@ -58,4 +58,7 @@ TODO
 ----
 
 - Twig functions and filters
-- Continue Web Application w/ at least .html, .xhtml, .tar and .tgz
+- Continue Web Application
+  - create a WebApplicationService
+  - support at least .html, .xhtml, .tar and .tgz
+  - clean-up on DeleteVersionEvent and DeleteContentEvent
