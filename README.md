@@ -72,7 +72,8 @@ TODO
   - clean-up on DeleteVersionEvent and DeleteContentEvent
   - full and embed views
   - Use abstraction to handle DFS
-- Continue FileTypeWhiteList
+- Continue FileTypeWhiteListValidator
   - Handle DFS
   - Do not activate it by default?
   - Validate default white list
+- A new field type or an override of a ezbinaryfile where authorized mime types can be defined

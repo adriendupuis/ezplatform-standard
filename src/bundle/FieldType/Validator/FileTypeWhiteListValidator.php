@@ -4,17 +4,22 @@ namespace AdrienDupuis\EzPlatformStandardBundle\FieldType\Validator;
 
 use eZ\Publish\Core\FieldType;
 use eZ\Publish\Core\FieldType\ValidationError;
+use eZ\Publish\Core\FieldType\Validator\FileExtensionBlackListValidator;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 
-class FileTypeWhiteList extends FieldType\Validator
+class FileTypeWhiteListValidator extends FieldType\Validator
 {
     /** @var ConfigResolverInterface */
     private $configResolver;
+
+    /* @var FileExtensionBlackListValidator */
+    private $fileExtensionBlackListValidator;
 
     /** @var \finfo */
     private $mimeInfo;
 
     protected $constraints = [
+        'extensionsBlackList' => [],
         'fileTypeWhiteList' => [],
     ];
 
@@ -25,13 +30,19 @@ class FileTypeWhiteList extends FieldType\Validator
         ],
     ];
 
-    public function __construct(ConfigResolverInterface $configResolver)
+    public function __construct(ConfigResolverInterface $configResolver, FileExtensionBlackListValidator $fileExtensionBlackListValidator)
     {
         $this->configResolver = $configResolver;
+        $this->fileExtensionBlackListValidator = $fileExtensionBlackListValidator;
         $this->mimeInfo = new \finfo(FILEINFO_MIME);
 
+        $this->constraints['extensionsBlackList'] = $this->fileExtensionBlackListValidator->extensionsBlackList; //->__get('extensionsBlackList')
         $this->constraints['fileTypeWhiteList'] = $this->configResolver->getParameter(
             'io.file_storage.file_type_whitelist'
+        );
+        $this->constraintsSchema = array_merge(
+            $this->fileExtensionBlackListValidator->getConstraintsSchema(),
+            $this->constraintsSchema
         );
     }
 
@@ -42,6 +53,12 @@ class FileTypeWhiteList extends FieldType\Validator
 
     public function validate(FieldType\Value $value): bool
     {
+        if (!$this->fileExtensionBlackListValidator->validate($value)) {
+            $this->errors = $this->fileExtensionBlackListValidator->getMessage();
+
+            return false;
+        }
+
         $path = $this->getFilePath($value);
 
         if (is_file($path) && !is_dir($path)) {

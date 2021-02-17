@@ -7,11 +7,12 @@ services:
             - [setContainer, ['@service_container']]
             #- [performAccessCheck, []]
 
-    ezpublish.fieldType.validator.black_list:
-        class: AdrienDupuis\EzPlatformStandardBundle\FieldType\Validator\FileTypeWhiteList
-        autowire: true
+    ezpublish.fieldType.validator.white_list:
+        class: AdrienDupuis\EzPlatformStandardBundle\FieldType\Validator\FileTypeWhiteListValidator
+        decorates: ezpublish.fieldType.validator.black_list
         arguments:
             - '@ezpublish.config.resolver'
+            - '@.inner'
 
 parameters:
     ezsettings.default.io.file_storage.file_type_whitelist:
