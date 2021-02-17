@@ -30,7 +30,6 @@ Parameters:
 - `inner_html` [string] (optional): Raw HTML to use as inner HTML
 - `inner_field` [string] (optional): Identifier of the field to use to generate inner HTML
 
-
 Example:
 
 ```twig
@@ -40,7 +39,7 @@ Example:
             locationId: target_location_id,
             viewType: 'link',
             params: {
-                'inner_field': 'intro',
+                'inner_field': 'short_title',
             },
         }
     )) }}
@@ -54,6 +53,15 @@ Example:
 * `web_application`: a content type to upload static HTML
   - Install: `bin/console kaliop:migration:migrate --path vendor/adriendupuis/ezplatform-standard/MigrationVersions/web_application.yaml;`
 
+### `FileTypeWhiteList` Validator
+
+For field types using files (`ezbinaryfile`, `ezimage`, `ezmedia`), the `FileTypeWhiteList` can replace the `FileExtensionBlackList`.
+
+| FileExtensionBlackList                              | FileTypeWhiteList                                             |
+| --------------------------------------------------- | ------------------------------------------------------------- |
+| Use file extension and can be fooled.               | Use real file type whatever the extension is.                 |
+| Black list must be updated if a new danger appears. | White list must be updated if a new authorized usage appears. |
+
 TODO
 ----
 
@@ -63,3 +71,8 @@ TODO
   - support at least .html, .xhtml, .tar and .tgz
   - clean-up on DeleteVersionEvent and DeleteContentEvent
   - full and embed views
+  - Use abstraction to handle DFS
+- Continue FileTypeWhiteList
+  - Handle DFS
+  - Do not activate it by default?
+  - Validate default white list

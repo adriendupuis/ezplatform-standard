@@ -6,3 +6,30 @@ services:
         calls:
             - [setContainer, ['@service_container']]
             #- [performAccessCheck, []]
+
+    ezpublish.fieldType.validator.black_list:
+        class: AdrienDupuis\EzPlatformStandardBundle\FieldType\Validator\FileTypeWhiteList
+        autowire: true
+        arguments:
+            - '@ezpublish.config.resolver'
+
+parameters:
+    ezsettings.default.io.file_storage.file_type_whitelist:
+        # Images
+        - image/gif
+        - image/png
+        - image/jpeg
+        # Medias
+        - audio/mpeg
+        - audio/ogg
+        # Documents
+        - text/plain
+        - application/pdf
+        - application/vnd.ms-powerpoint
+        - application/msword
+        - text/csv
+        - application/vnd.ms-excel
+        # Archives
+        - application/zip
+        - application/x-tar
+        - application/x-gzip
