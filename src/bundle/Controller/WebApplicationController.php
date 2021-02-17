@@ -3,9 +3,8 @@
 namespace AdrienDupuis\EzPlatformStandardBundle\Controller;
 
 use eZ\Publish\API\Repository\Values\Content\Content;
-use eZ\Publish\Core\MVC\ConfigResolverInterface as ConfigResolver;
 use eZ\Publish\Core\FieldType;
-use eZ\Publish\API\Repository\Values\Content\Field;
+use eZ\Publish\Core\MVC\ConfigResolverInterface as ConfigResolver;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -18,7 +17,8 @@ class WebApplicationController extends AbstractController
     /** @var ConfigResolver */
     private $configResolver;
 
-    public function __construct(ConfigResolver $configResolver) {
+    public function __construct(ConfigResolver $configResolver)
+    {
         $this->configResolver = $configResolver;
     }
 
@@ -26,11 +26,9 @@ class WebApplicationController extends AbstractController
     {
         $content = $view->getContent();
 
-        $usePagelayout = $content->getFieldValue(self::USE_PAGELAYOUT_FIELD_IDENTIFIER)->bool;
-dump($content);
         $view->addParameters([
             'web_application_url' => $this->getWebApplicationUrl($content) ?? 'about:blank',
-            'no_layout' => !$usePagelayout,
+            'no_layout' => !$content->getFieldValue(self::USE_PAGELAYOUT_FIELD_IDENTIFIER)->bool,
         ]);
 
         return $view;
@@ -65,11 +63,10 @@ dump($content);
                         throw new \Exception('Unopenable archive');
                     }
                 }
+
                 return $webApplicationUrl;
         }
 
-
         return null;
     }
-
 }

@@ -62,3 +62,4 @@ TODO
   - create a WebApplicationService
   - support at least .html, .xhtml, .tar and .tgz
   - clean-up on DeleteVersionEvent and DeleteContentEvent
+  - full and embed views
