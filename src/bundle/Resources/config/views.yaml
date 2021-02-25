@@ -13,7 +13,12 @@ system:
                     match:
                         Identifier\ContentType: ['plain_text']
                 web_application:
-                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\WebApplicationController::viewAction'
                     template: '@ezdesign/full/web_application.html.twig'
+                    match:
+                        Identifier\ContentType: ['web_application']
+            embed:
+                web_application:
+                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\WebApplicationController::viewAction'
+                    template: '@ezdesign/embed/web_application.html.twig'
                     match:
                         Identifier\ContentType: ['web_application']

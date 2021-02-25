@@ -1,6 +1,25 @@
-{#{% extends '@ezdesign/pagelayout.html.twig' %}#}
 {% extends no_layout is defined and no_layout == true ? view_base_layout : page_layout %}
 
 {% block content %}
-    <iframe src="{{ web_application_url }}"></iframe>
+    {{ render(controller('ez_content:viewAction', {
+        contentId: content.id,
+        viewType: 'embed',
+        params: {
+            embedded_by: 'full',
+        },
+    })) }}
+    <script type="application/javascript">
+        initWebApp{{ content.id }} = function () {
+            var webApp = document.querySelector('iframe#web_application_{{ content.id }}');
+            while (window.innerHeight >= document.documentElement.offsetHeight) {
+                webApp.style.height = (1 + webApp.offsetHeight) + 'px';
+            }
+        };
+
+        if ('loading' != document.readyState) {
+            initWebApp{{ content.id }}();
+        } else {
+            document.addEventListener('DOMContentLoaded', initWebApp{{ content.id }});
+        }
+    </script>
 {% endblock %}
