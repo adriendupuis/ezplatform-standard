@@ -1,4 +1,14 @@
 services:
+    AdrienDupuis\EzPlatformStandardBundle\Service\:
+        resource: '../../Service/'
+        autowire: true
+
+    AdrienDupuis\EzPlatformStandardBundle\EventSubscriber\:
+        resource: '../../EventSubscriber/'
+        autowire: true
+        public: true
+        tags: ['kernel.event_subscriber']
+
     AdrienDupuis\EzPlatformStandardBundle\Controller\:
         resource: '../../Controller/'
         autowire: true
@@ -15,6 +25,9 @@ services:
             - '@.inner'
 
 parameters:
+    ezsettings.admin_group.content_type.image_asset:
+        thumbnail: '/bundles/ezplatformadminuiassets/vendors/webalys/streamlineicons/all-icons.svg#image'
+
     ezsettings.default.io.file_storage.file_type_whitelist:
         # Images
         - image/gif
@@ -30,6 +43,9 @@ parameters:
         - application/msword
         - text/csv
         - application/vnd.ms-excel
+        # Web
+        - text/html
+        - text/xml
         # Archives
         - application/zip
         - application/x-tar
