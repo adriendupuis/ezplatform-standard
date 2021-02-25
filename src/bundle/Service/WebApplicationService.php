@@ -2,9 +2,11 @@
 
 namespace AdrienDupuis\EzPlatformStandardBundle\Service;
 
+use AdrienDupuis\EzPlatformStandardBundle\Event\WebApplicationExtractionEvent;
 use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\Core\FieldType;
 use eZ\Publish\Core\MVC\ConfigResolverInterface as ConfigResolver;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @todo DFS
@@ -12,11 +14,20 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface as ConfigResolver;
  */
 class WebApplicationService
 {
-    public function __construct(ConfigResolver $configResolver)
+    /** @var ConfigResolver */
+    private $configResolver;
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    public function __construct(ConfigResolver $configResolver, EventDispatcherInterface $eventDispatcher)
     {
         $this->configResolver = $configResolver;
+        $this->eventDispatcher = $eventDispatcher;
+
         $this->storagePath = "{$this->configResolver->getParameter('var_dir')}/{$this->configResolver->getParameter('storage_dir')}";
         $this->webApplicationStoragePath = "{$this->storagePath}/images/web_application";
+
         $this->usageStorageFilePath = "{$this->webApplicationStoragePath}/{$this->usageStorageFile}";
         if (!is_dir($this->webApplicationStoragePath)) {
             mkdir($this->webApplicationStoragePath, 0755, true);
@@ -40,20 +51,27 @@ class WebApplicationService
         $versionId = $content->versionInfo->id;
 
         $originalPath = "{$this->storagePath}/original/{$fileFieldValue->id}";
-        $dirPath = $this->getDirectoryPath($originalPath);
+        $extractionPath = $this->getDirectoryPath($originalPath);
 
         $this->setUsage($originalPath, $contentId, $versionId);
 
-        if (!is_dir($dirPath)) {
-            $exception = $this->extract($originalPath, $dirPath, $fileFieldValue->mimeType);
+        if (!is_dir($extractionPath)) {
+            //$this->eventDispatcher->dispatch(new BeforeWebApplicationExtractionEvent());
+            $exception = $this->extract($originalPath, $extractionPath, $fileFieldValue->mimeType);
+            $this->eventDispatcher->dispatch(new WebApplicationExtractionEvent(
+                $content,
+                $content->getField($fileFieldIdentifier, $languageCode),
+                $originalPath,
+                $extractionPath,
+                is_null($exception) && is_dir($extractionPath)
+            ));
             if (!is_null($exception)) {
-                //dump($exception);
                 //throw $exception;
                 return null;
             }
-        }
-        if (!is_dir($dirPath)) {
-            return null;
+            if (!is_dir($extractionPath)) {
+                return null;
+            }
         }
 
         $indexPath = null;
@@ -71,13 +89,13 @@ class WebApplicationService
             $indexRelativePath = $indexFieldIdentifierOrPath;
         }
         if ($indexRelativePath) {
-            $tmpIndexPath = "{$dirPath}/{$indexRelativePath}";
+            $tmpIndexPath = "{$extractionPath}/{$indexRelativePath}";
         }
         if ($tmpIndexPath && is_file($tmpIndexPath)) {
             $indexPath = $tmpIndexPath;
         } else {
             foreach ([basename($originalPath), 'index.html'] as $indexRelativePath) {
-                $tmpIndexPath = "{$dirPath}/{$indexRelativePath}";
+                $tmpIndexPath = "{$extractionPath}/{$indexRelativePath}";
                 if (is_file($tmpIndexPath)) {
                     $indexPath = $tmpIndexPath;
                     break;
@@ -103,40 +121,31 @@ class WebApplicationService
         }
     }
 
-    private function extract(string $originalPath, string $dirPath, string $mimeType = null): ?\Exception
+    private function extract(string $srcFilePath, string $destDirPath, string $mimeType = null): ?\Exception
     {
-        if (!$mimeType) {
-            $mimeType = (new \finfo(FILEINFO_MIME))->file($originalPath);
-        }
-        dump($originalPath, $dirPath, $mimeType);
-        switch ($mimeType) {
-            case 'application/zip':
-                return $this->extractZip($originalPath, $dirPath);
-            case 'application/x-tar':
-                return $this->extractTar($originalPath, $dirPath);
-            case 'application/x-gzip':
-                return $this->extractGzip($originalPath, $dirPath);
-            case 'text/html':
-            case 'text/xml':
-                try {
-                    if (!copy($originalPath, "$dirPath/".basename($originalPath))) {
+        try {
+            if (!$mimeType) {
+                $mimeType = (new \finfo(FILEINFO_MIME))->file($srcFilePath);
+            }
+            switch ($mimeType) {
+                case 'application/zip':
+                    $this->extractZip($srcFilePath, $destDirPath);
+                    break;
+                case 'application/x-tar':
+                    $this->extractTar($srcFilePath, $destDirPath);
+                    break;
+                case 'application/x-gzip':
+                    $this->extractGzip($srcFilePath, $destDirPath);
+                    break;
+                case 'text/html':
+                case 'text/xml':
+                    if (!copy($srcFilePath, "$destDirPath/".basename($srcFilePath))) {
                         throw new \Exception('Uncopyable file');
                     }
-                } catch (\Exception $exception) {
-                    return $exception;
-                }
-            default:
-                return new \Exception('Unsupported file type');
-        }
-    }
-
-    private function extractZip($srcFile, $destDir): ?\Exception
-    {
-        try {
-            $zip = new \ZipArchive();
-            $zip->open($srcFile);
-            $zip->extractTo($destDir);
-            $zip->close();
+                    // no break
+                default:
+                    throw new \Exception("Unsupported file type '$mimeType'");
+            }
         } catch (\Exception $exception) {
             return $exception;
         }
@@ -144,32 +153,27 @@ class WebApplicationService
         return null;
     }
 
-    private function extractTar($srcFile, $destDir): ?\Exception
+    private function extractZip($srcFile, $destDir): void
     {
-        try {
-            dump(shell_exec("tar -tvf $srcFile"));
-            $tar = new \PharData($srcFile);
-            $tar->extractTo($destDir);
-        } catch (\Exception $exception) {
-            return $exception;
-        }
-
-        return null;
+        $zip = new \ZipArchive();
+        $zip->open($srcFile);
+        $zip->extractTo($destDir);
+        $zip->close();
     }
 
-    private function extractGzip($srcFile, $destDir): ?\Exception
+    private function extractTar($srcFile, $destDir): void
+    {
+        $tar = new \PharData($srcFile);
+        $tar->extractTo($destDir);
+    }
+
+    private function extractGzip($srcFile, $destDir): void
     {
         $extension = 'tmp';
-        try {
-            $gzip = new \PharData($srcFile);
-            $tar = $gzip->decompress($extension);
-            $tar->extractTo($destDir);
-            unlink(str_replace(pathinfo($srcFile, PATHINFO_EXTENSION), $extension, $srcFile));
-        } catch (\Exception $exception) {
-            return $exception;
-        }
-
-        return null;
+        $gzip = new \PharData($srcFile);
+        $tar = $gzip->decompress($extension);
+        $tar->extractTo($destDir);
+        unlink(str_replace(pathinfo($srcFile, PATHINFO_EXTENSION), $extension, $srcFile));
     }
 
     private function getDirectoryPath($filePath): string
