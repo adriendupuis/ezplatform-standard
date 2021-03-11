@@ -1,0 +1,8 @@
+custom_tags:
+    abbreviation:
+        template: '@ezdesign/fields/ezrichtext/custom_tags/abbreviation.html.twig'
+        icon: '/bundles/ezplatformadminui/img/ez-icons.svg#information'
+        is_inline: true
+        attributes:
+            expansion:
+                type: 'string'
