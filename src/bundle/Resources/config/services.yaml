@@ -26,7 +26,7 @@ services:
 
 parameters:
     ezsettings.admin_group.content_type.image_asset:
-        thumbnail: '/bundles/ezplatformadminuiassets/vendors/webalys/streamlineicons/all-icons.svg#image'
+        thumbnail: '/bundles/ibexaplatformicons/img/all-icons.svg#image'
 
     ezsettings.default.io.file_storage.file_type_whitelist:
         # Images
