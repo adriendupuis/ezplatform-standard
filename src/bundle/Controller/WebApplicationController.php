@@ -21,7 +21,7 @@ class WebApplicationController extends AbstractController
         $this->webApplicationService = $webApplicationService;
     }
 
-    public function viewAction(ContentView $view)
+    public function viewAction(ContentView $view): ContentView
     {
         $content = $view->getContent();
 
