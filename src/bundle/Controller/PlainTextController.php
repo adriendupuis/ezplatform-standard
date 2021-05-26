@@ -15,9 +15,6 @@ class PlainTextController extends AbstractController
     const MEDIA_TYPE_STRING_FIELD_IDENTIFIER = 'media_type_string';
     const PLAIN_TEXT_FIELD_IDENTIFIER = 'plain_text';
 
-    /**
-     * @return ContentView|Response
-     */
     public function viewAction(ContentView $view): Response
     {
         $content = $view->getContent();
