@@ -90,6 +90,9 @@ class FileTypeWhiteListValidator extends FieldType\Validator
         return false;
     }
 
+    /**
+     * @param FieldType\BinaryBase\Value|FieldType\Image\Value $value
+     */
     public function getFilePath(FieldType\Value $value): string
     {
         if (isset($value->inputUri)) {
@@ -97,7 +100,12 @@ class FileTypeWhiteListValidator extends FieldType\Validator
         }
 
         //TODO: Use abstraction; Handle DFS
-        return "{$this->configResolver->getParameter('var_dir')}/{$this->configResolver->getParameter('storage_dir')}/original/{$value->id}";
+
+        if (isset($value->uri)) {
+            return ".{$value->uri}";
+        }
+
+        return trim(shell_exec("find {$this->configResolver->getParameter('var_dir')}/{$this->configResolver->getParameter('storage_dir')} -path */{$value->id}"));
     }
 
     public function getFileType(string $path)
