@@ -8,6 +8,10 @@ system:
     site_group:
         content_view:
             full:
+                image:
+                    controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\ImageController::viewAction'
+                    match:
+                        Identifier\ContentType: ['image']
                 plain_text:
                     controller: 'AdrienDupuis\EzPlatformStandardBundle\Controller\PlainTextController::viewAction'
                     match:
