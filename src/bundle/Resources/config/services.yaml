@@ -23,6 +23,7 @@ services:
         arguments:
             - '@ezpublish.config.resolver'
             - '@.inner'
+            - '%ibexa.platform.io.nfs.adapter.config%'
 
 parameters:
     ezsettings.admin_group.content_type.image_asset:

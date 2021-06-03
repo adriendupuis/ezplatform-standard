@@ -30,20 +30,24 @@ class FileTypeWhiteListValidator extends FieldType\Validator
         ],
     ];
 
-    public function __construct(ConfigResolverInterface $configResolver, FileExtensionBlackListValidator $fileExtensionBlackListValidator)
+    /** @var string */
+    private $root = '.';
+
+    public function __construct(ConfigResolverInterface $configResolver, FileExtensionBlackListValidator $fileExtensionBlackListValidator, array $config)
     {
         $this->configResolver = $configResolver;
         $this->fileExtensionBlackListValidator = $fileExtensionBlackListValidator;
         $this->mimeInfo = new \finfo(FILEINFO_MIME);
 
-        $this->constraints['extensionsBlackList'] = $this->fileExtensionBlackListValidator->extensionsBlackList; //->__get('extensionsBlackList')
-        $this->constraints['fileTypeWhiteList'] = $this->configResolver->getParameter(
-            'io.file_storage.file_type_whitelist'
-        );
+        $this->constraints['extensionsBlackList'] = $this->fileExtensionBlackListValidator->extensionsBlackList;
+        $this->constraints['fileTypeWhiteList'] = $this->configResolver->getParameter('io.file_storage.file_type_whitelist');
         $this->constraintsSchema = array_merge(
             $this->fileExtensionBlackListValidator->getConstraintsSchema(),
             $this->constraintsSchema
         );
+        if (array_key_exists('root', $config)) {
+            $this->root = rtrim($config['root'], '/');
+        }
     }
 
     public function validateConstraints($constraints)
@@ -99,13 +103,11 @@ class FileTypeWhiteListValidator extends FieldType\Validator
             return $value->inputUri; // tmp_name, the file hasn't been moved to storage yet
         }
 
-        //TODO: Use abstraction; Handle DFS
-
         if (isset($value->uri)) {
-            return ".{$value->uri}";
+            return "{$this->root}{$value->uri}";
         }
 
-        return trim(shell_exec("find {$this->configResolver->getParameter('var_dir')}/{$this->configResolver->getParameter('storage_dir')} -path */{$value->id}"));
+        return trim(shell_exec("find {$this->root}/{$this->configResolver->getParameter('var_dir')}/{$this->configResolver->getParameter('storage_dir')} -path */{$value->id}"));
     }
 
     public function getFileType(string $path)
