@@ -3,7 +3,8 @@
     "description": "eZ Platform Standard Features",
     "autoload": {
         "psr-4": {
-            "AdrienDupuis\\EzPlatformStandardBundle\\": "src/bundle/"
+            "AdrienDupuis\\EzPlatformStandardBundle\\": "src/bundle/",
+            "eZ\\": "lib/eZ/"
         }
     },
     "require": {

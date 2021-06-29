@@ -45,6 +45,37 @@ Example:
     )) }}
 ```
 
+### View Matchers
+
+#### `Field\Checkbox`
+
+Match if a checkbox is checked.
+
+The parameter is a checkbox field identifier or an array of identifiers. If one field exists, is a checkbox and is checked, it matches.
+
+```yaml
+match:
+  Field\CheckboxValue: 'is_special'
+```
+
+Due to matching rules ordered from top to bottom, is the checkbox distinguish two cases, test checkbox first; For example:
+
+```yaml
+content_view:
+  full:
+    folder_special:
+      template: '@ezdesign/full/folder_special.html.twig'
+      match:
+        Identifier\ContentType: ['folder']
+        Field\Checkbox: ['is_special']
+    folder:
+      template: '@ezdesign/full/folder.html.twig'
+      match:
+        Identifier\ContentType: ['folder']
+```
+
+As this matcher doesn't work on content metadata but works with content field values, it's a bit slow and resource consuming.
+
 ### Content Types
 
 * `plain_text`: a content type to deliver plain text media types
