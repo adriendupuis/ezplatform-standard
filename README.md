@@ -75,6 +75,25 @@ content_view:
 ```
 
 As this matcher doesn't work on content metadata but works with content field values, it's a bit slow and resource consuming.
+If multiple matchers are used, this Field\* ones should be the last ones. 
+
+#### `Field\Selection`
+
+Match if selection has a given option selected.
+
+The parameters are composed of
+- a selection field identifier as key
+- an option, or array of options, as value
+
+About options:
+- `null` means the absence of selected option; 
+- Option index can be used;
+- The (case insensitive) text of the option can be used — the text must be in the default language, not from an other content type's translation.
+
+```yaml
+Field\Selection:
+    feature: [~, 0, 'normal']
+```
 
 ### Content Types
 
