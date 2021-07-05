@@ -8,6 +8,7 @@ use eZ\Publish\Core\MVC\Symfony\View\ContentValueView;
 use eZ\Publish\Core\MVC\Symfony\View\LocationValueView;
 use eZ\Publish\Core\MVC\Symfony\View\View;
 
+/** @uses ContentMatcherInterface::matchContent */
 trait ContentMatcherTrait
 {
     public function matchLocation(Location $location): bool
