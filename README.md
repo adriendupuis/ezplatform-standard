@@ -99,7 +99,7 @@ Field\Selection:
 
 * `plain_text`: a content type to deliver plain text media types
   - Install: `bin/console kaliop:migration:migrate --path vendor/adriendupuis/ezplatform-standard/MigrationVersions/plaintext.yaml;`
-  - Usage example: robots.txt — see vendor/adriendupuis/ezplatform-standard/MigrationVersions/plaintext.robots.txt.yaml
+  - Usage example: robots.txt — see vendor/adriendupuis/ezplatform-standard/[MigrationVersions/plaintext.robots.txt.yaml](MigrationVersions/plaintext.robots.txt.yaml)
 * `web_application`: a content type to upload static HTML
   - Install: `bin/console kaliop:migration:migrate --path vendor/adriendupuis/ezplatform-standard/MigrationVersions/web_application.yaml;`
 
