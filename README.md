@@ -10,6 +10,13 @@ Install
 1. Execute `composer require adriendupuis/ezplatform-standard;`
 1. Add to config/bundles.php: `AdrienDupuis\EzPlatformStandardBundle\AdrienDupuisEzPlatformStandardBundle::class => ['all' => true],`
 
+Features
+--------
+
+### Typed Matrix field type
+
+`adtypedmatrix` is like `ezmatrix` but with typed columns.
+
 TODO
 ----
 
