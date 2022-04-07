@@ -1,0 +1,42 @@
+{% apply spaceless %}
+
+    {% if href_url is defined and href_url is not empty %}
+        {% set href = href_url %}
+    {% elseif href_field is defined and href_field is not empty %}
+        {% set href -%}
+            {{- ez_render_field(content, href_field, { 'template': '@ezdesign/link_href_content_fields.html.twig' }) -}}
+        {%- endset %}
+    {% else %}
+        {% set href = path('ez_urlalias', { 'locationId': location.id }) %}
+    {% endif %}
+
+    {% if inner_html is defined and inner_html is not empty %}
+        {% set inner_html = inner_html|raw %}
+    {% elseif inner_field is defined and inner_field is not empty %}
+        {% set inner_html %}
+            {{ ez_render_field(content, inner_field) }}
+        {% endset %}
+    {% else %}
+        {% set inner_html = ez_content_name(content) %}
+    {% endif %}
+
+    {% if class is defined and class is not empty %}
+        {% if class is not iterable %}
+            {% set class = [class] %}
+        {% endif %}
+    {% else %}
+        {% set class = [] %}
+    {% endif %}
+    {# TODO: Add a CSS class related to access right: public, restricted, authorized, forbidden #}
+
+    {% set attributes = '' %}
+    {% if target is defined and target is not empty %}
+        {% set attributes = attributes ~ ' target="' ~ target ~ '"' %}
+    {% endif %}
+    {% if class is not empty %}
+        {% set attributes = attributes ~ ' class="' ~ class|join(' ') ~ '"' %}
+    {% endif %}
+
+    <a href="{{ href }}"{{ attributes|raw }}>{{ inner_html|raw }}</a>
+
+{% endapply %}

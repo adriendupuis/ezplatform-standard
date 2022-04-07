@@ -1,0 +1,3 @@
+ezrichtext.custom_tags.abbreviation.label: 'Abbreviation/Acronym'
+ezrichtext.custom_tags.abbreviation.description: 'Add the expansion or a description as a tooltip to an abbreviation or an acronym'
+ezrichtext.custom_tags.abbreviation.attributes.expansion.label: 'Expansion/Description'

@@ -1,0 +1,42 @@
+-   mode: create
+    type: content_type
+    content_type_group: Content
+    name: Plain Text
+    identifier: plain_text
+    name_pattern: <name>
+    attributes:
+        -   type: ezstring
+            name: Name
+            identifier: name
+            required: true
+            searchable: true
+        -   type: eztext
+            name: Content
+            identifier: plain_text
+            description: Plain text / code
+            required: true
+        -   type: ezselection
+            name: Media Type
+            identifier: media_type_select
+            description: MIME Type / Content-Type HTTP header (if pre-defined ones doesn't fit, use free text input below)
+            required: false
+            disable-translation: true
+            field-settings:
+                isMultiple: false
+                options:
+                    - 'Plain Text: text/plain'
+                    - 'Hypertext Markup Language (HTML): text/html'
+                    - 'Extensible HyperText Markup Language (XHTML): application/xhtml+xml'
+                    - 'Cascaded Style Sheet (CSS): text/css'
+                    - 'JavaScript (JS):  application/javascript'
+                    - 'JavaScript Object Notation (JSON): application/json'
+                    - 'Scalable Vector Graphics (SVG): image/svg+xml'
+                    - 'Extensible Markup Language (XML): text/xml'
+                    - 'Coma-Separated Values (CSV): text/csv'
+                    - 'Tab-Separated Values (TSV): text/tab-separated-values'
+        -   type: ezstring
+            name: Media Type
+            identifier: media_type_string
+            description: MIME Type / Content-Type HTTP header (if filled, will be used instead of selection above)
+            required: false
+            disable-translation: true

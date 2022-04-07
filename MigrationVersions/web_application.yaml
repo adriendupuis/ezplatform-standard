@@ -1,0 +1,31 @@
+-   mode: create
+    type: content_type
+    content_type_group: Media
+    name: 'Web Application'
+    identifier: web_application
+    description: 'HTML application as a single page or archive; No server-side code will be executed.'
+    name_pattern: <name>
+    attributes:
+        -   type: ezstring
+            name: 'Name'
+            identifier: name
+            required: true
+            searchable: true
+        -   type: ezbinaryfile
+            name: 'File'
+            identifier: file
+            description: 'File containing the application, single page or archive; supported extensions: .html, .xhtml, .zip, .tar, .tgz'
+            required: true
+        -   type: ezstring
+            name: 'Archive Index'
+            identifier: index
+            description: 'The index file inside the archive, relative to archive root'
+            default-value: index.html
+            required: true
+        -   type: ezboolean
+            name: 'Use default layout'
+            identifier: use_pagelayout
+            description: 'If checked, the content will be wrapped in the default page layout'
+            default-value: true
+            required: false
+            disable-translation: true

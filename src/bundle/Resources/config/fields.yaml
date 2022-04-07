@@ -1,0 +1,17 @@
+system:
+    admin_group:
+        fieldtypes:
+            ezrichtext:
+                custom_tags: [abbreviation]
+                toolbars:
+                    text:
+                        buttons:
+                            abbreviation:
+                                # Between Quote and Strike — see vendor/ezsystems/ezplatform-richtext/src/bundle/Resources/config/prepend/ezpublish.yaml
+                                priority: 25
+                    abbreviation:
+                        buttons:
+                            ezcustomtagedit:
+                                priority: 20
+                            ezblockremove:
+                                priority: 10

@@ -1,0 +1,53 @@
+services:
+    AdrienDupuis\EzPlatformStandardBundle\Service\:
+        resource: '../../Service/'
+        autowire: true
+
+    AdrienDupuis\EzPlatformStandardBundle\EventSubscriber\:
+        resource: '../../EventSubscriber/'
+        autowire: true
+        public: true
+        tags: ['kernel.event_subscriber']
+
+    AdrienDupuis\EzPlatformStandardBundle\Controller\:
+        resource: '../../Controller/'
+        autowire: true
+        tags: ['controller.service_arguments']
+        calls:
+            - [setContainer, ['@service_container']]
+            #- [performAccessCheck, []]
+
+    ezpublish.fieldType.validator.white_list:
+        class: AdrienDupuis\EzPlatformStandardBundle\FieldType\Validator\FileTypeWhiteListValidator
+        decorates: ezpublish.fieldType.validator.black_list
+        arguments:
+            - '@ezpublish.config.resolver'
+            - '@.inner'
+            - '%ibexa.platform.io.nfs.adapter.config%'
+
+parameters:
+    ezsettings.admin_group.content_type.image_asset:
+        thumbnail: '/bundles/ibexaplatformicons/img/all-icons.svg#image'
+
+    ezsettings.default.io.file_storage.file_type_whitelist:
+        # Images
+        - image/gif
+        - image/png
+        - image/jpeg
+        # Medias
+        - audio/mpeg
+        - audio/ogg
+        # Documents
+        - text/plain
+        - application/pdf
+        - application/vnd.ms-powerpoint
+        - application/msword
+        - text/csv
+        - application/vnd.ms-excel
+        # Web
+        - text/html
+        - text/xml
+        # Archives
+        - application/zip
+        - application/x-tar
+        - application/x-gzip

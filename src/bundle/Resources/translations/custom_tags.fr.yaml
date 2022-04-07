@@ -1,0 +1,3 @@
+ezrichtext.custom_tags.abbreviation.label: 'Abbréviation/Acronyme/Sigle'
+ezrichtext.custom_tags.abbreviation.description: "Ajouter en bulle d'aide la signification ou la description d'une abbréviation, d'un acronyme ou d'un sigle"
+ezrichtext.custom_tags.abbreviation.attributes.expansion.label: 'Signification/Description'
